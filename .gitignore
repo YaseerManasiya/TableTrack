@@ -1,0 +1,8 @@
+# Ignore .DS_Store files (macOS)
+.DS_Store
+
+# Ignore language files in Resources/lang/ directories under Addon
+# but keep the eng/ subdirectories
+Addon/**/Resources/lang/*
+!Addon/**/Resources/lang/eng/
+

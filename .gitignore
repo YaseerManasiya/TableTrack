@@ -5,4 +5,4 @@
 # but keep the eng/ subdirectories
 Addon/**/Resources/lang/*
 !Addon/**/Resources/lang/eng/
-
+vendor

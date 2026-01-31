@@ -61,6 +61,33 @@ class OrderSeeder extends Seeder
         }
     }
 
+    /**
+     * Seed orders for today only (used by daily order:seed command)
+     */
+    public function seedOrdersForToday($branch)
+    {
+        // Check if branch has required data
+        $table = Table::inRandomOrder()->where('branch_id', $branch->id)->first();
+        $waiter = User::inRandomOrder()->where('branch_id', $branch->id)->first();
+        $menuItems = MenuItem::where('branch_id', $branch->id)->exists();
+
+        if (!$table || !$waiter || !$menuItems) {
+            throw new \Exception("Branch {$branch->id} does not have required data (tables, waiters, or menu items)");
+        }
+
+        // Create 5 orders for today (same as original seeder)
+        for ($i = 0; $i < 5; $i++) {
+            $customer = new Customer();
+            $customer->restaurant_id = $branch->restaurant_id;
+            $customer->name = fake()->name();
+            $customer->email = fake()->unique()->safeEmail();
+            $customer->delivery_address = fake()->address();
+            $customer->save();
+
+            $this->placeOrder($customer, $branch, true); // true for today
+        }
+    }
+
     public function placeOrder($customer, $branch, $isToday = true)
     {
         $table = Table::inRandomOrder()->where('branch_id', $branch->id)->first();

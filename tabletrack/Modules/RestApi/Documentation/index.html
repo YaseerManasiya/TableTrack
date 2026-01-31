@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>TableTrack - ApplicationIntegration Module Documentation</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+        <style>
+            .sidebar {
+                background: #1a1a1a;
+                min-height: 100vh;
+            }
+            .content {
+                background: #f8f9fa;
+            }
+            .nav-link {
+                color: #e2e2e2;
+                padding: 0.75rem 1.5rem;
+                display: block;
+                transition: all 0.3s;
+            }
+            .nav-link:hover,
+            .nav-link.active {
+                background: #2d2d2d;
+                color: #00dffc;
+            }
+            .section {
+                scroll-margin-top: 2rem;
+            }
+            code {
+                background: #2d2d2d;
+                color: #e2e2e2;
+                padding: 0.2rem 0.4rem;
+                border-radius: 0.25rem;
+            }
+        </style>
+    </head>
+    <body class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 fixed h-full">
+            <div class="p-6">
+                <img src="assets/images/logo.png" alt="TableTrack Logo" class="x-auto mb-8" />
+            </div>
+            <nav>
+                <a href="#overview" class="nav-link active">Overview</a>
+                <a href="#description" class="nav-link">Description</a>
+                <a href="#requirements" class="nav-link">Requirements</a>
+                <a href="#installation" class="nav-link">Installation</a>
+                <a href="#quick-start" class="nav-link">Quick Start Guide</a>
+                <a href="#api-reference" class="nav-link">API Reference</a>
+                <a href="#notifications" class="nav-link">Notifications & Push</a>
+                <a href="#summary" class="nav-link">Feature Summary</a>
+            </nav>
+            <div class="absolute bottom-0 p-4 text-gray-400 text-sm">
+                <p>© 2025 TableTrack</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content ml-64 flex-1 p-8">
+            <section id="overview" class="section mb-12">
+                <h1 class="text-4xl font-bold mb-6">TableTrack ApplicationIntegration Module</h1>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8">
+                    <p class="text-blue-700">Compatible with TableTrack v1.2.1 and above</p>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-8">
+                    <p class="text-yellow-700">
+                        This is an add-on module that works exclusively with the TableTrack application. To purchase TableTrack, please
+                        visit
+                        <a href="https://1.envato.market/tabletrack" class="text-yellow-600 underline" target="_blank"
+                            >TableTrack on CodeCanyon</a
+                        >
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold mb-2">Latest Version</h3>
+                        <p>Released: January 2026</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold mb-2">Support</h3>
+                        <a href="https://froiden.freshdesk.com/support/home" class="text-blue-600 hover:underline" target="_blank"
+                            >Get Help</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <section id="description" class="section mb-12">
+                <h2 class="text-3xl font-bold mb-6">Description</h2>
+                <div class="prose max-w-none">
+                    <p>
+                        <strong>ApplicationIntegration</strong> is a unified API layer that exposes POS and customer-facing functionality
+                        for external or companion applications (Flutter, mobile, web).
+                    </p>
+                    <p class="mt-4">
+                        It wraps existing Laravel domain logic into stable, token-based endpoints and provides essential supporting
+                        utilities, including:
+                    </p>
+                    <ul class="list-disc ml-6 mt-4 space-y-2">
+                        <li>Branch scoping and enforcement</li>
+                        <li>Menus and items</li>
+                        <li>Orders and payments</li>
+                        <li>Reservations and table management</li>
+                        <li>Customers and staff</li>
+                        <li>Device tokens</li>
+                        <li>In-app and broadcast notifications</li>
+                    </ul>
+                    <p class="mt-4">
+                        The module integrates seamlessly without requiring changes to the core application, providing a single API contract
+                        for all POS and customer-facing applications with secure multi-branch enforcement.
+                    </p>
+                </div>
+            </section>
+
+            <section id="requirements" class="section mb-12">
+                <h2 class="text-3xl font-bold mb-6">System Requirements</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            PHP >= 8.2.0
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            OpenSSL PHP Extension
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            PDO PHP Extension
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Mbstring PHP Extension
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Tokenizer PHP Extension
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            XML & GD PHP Extensions
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="installation" class="section mb-12">
+                <h2 class="text-3xl font-bold mb-6">Installation Guide</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="mb-4">For detailed installation instructions, please visit our comprehensive guide:</p>
+                    <a
+                        href="https://youtu.be/4mLyhf43_wI"
+                        class="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+                        target="_blank"
+                    >
+                        View Installation Guide
+                    </a>
+                </div>
+            </section>
+
+            <section id="quick-start" class="section mb-12">
+                <h2 class="text-3xl font-bold mb-6">Quick Start Guide</h2>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">1. Authentication</h3>
+                    <p class="mb-4">Login to get a Bearer Token:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <code>POST /api/application-integration/auth/login</code>
+                    </div>
+                    <p class="mb-2 mt-4 font-semibold">Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "email": "user@example.com",    // required, must be valid email
+  "password": "password123"        // required, string
+}</pre
+                        >
+                    </div>
+                    <p class="mb-4">Required Headers (for all requests):</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <div>Authorization: Bearer &lt;token&gt;</div>
+                        <div>Accept: application/json</div>
+                        <div>Content-Type: application/json</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">2. Branch Context</h3>
+                    <p class="mb-4">Tokens are scoped to the user's restaurant and branch. To switch branches:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <code>POST /platform/switch-branch</code>
+                    </div>
+                    <p class="mb-2 mt-4 font-semibold">Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "branch_id": 1    // required, integer, must exist in branches table
+}</pre
+                        >
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">3. Catalog (POS)</h3>
+                    <p class="mb-4 font-semibold">Menus & Categories:</p>
+                    <ul class="list-disc ml-6 mb-4 space-y-1">
+                        <li><code>GET /pos/menus</code></li>
+                        <li><code>GET /pos/categories</code></li>
+                    </ul>
+                    <p class="mb-4 font-semibold">Items & Modifiers:</p>
+                    <ul class="list-disc ml-6 mb-4 space-y-1">
+                        <li><code>GET /pos/items</code></li>
+                        <li><code>GET /pos/items/category/{id}</code></li>
+                        <li><code>GET /pos/items/menu/{id}</code></li>
+                        <li><code>GET /pos/items/{id}/variations</code></li>
+                        <li><code>GET /pos/items/{id}/modifier-groups</code></li>
+                    </ul>
+                    <p class="mb-4 font-semibold">Order Configuration:</p>
+                    <ul class="list-disc ml-6 mb-4 space-y-1">
+                        <li><code>GET /pos/order-types</code></li>
+                        <li><code>GET /pos/extra-charges/{orderType}</code></li>
+                        <li><code>GET /pos/delivery-platforms</code></li>
+                        <li><code>GET /pos/actions</code></li>
+                        <li><code>GET /pos/get-order-number</code></li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">4. Tables & Reservations</h3>
+                    <ul class="list-disc ml-6 mb-4 space-y-2">
+                        <li>List tables: <code>GET /pos/tables</code></li>
+                        <li>Force unlock: <code>POST /pos/tables/{tableId}/unlock</code> (No request body required)</li>
+                        <li>
+                            Reservations:
+                            <ul class="list-disc ml-6 mt-2 space-y-1">
+                                <li><code>GET /pos/reservations/today</code></li>
+                                <li><code>GET /pos/reservations</code></li>
+                                <li><code>POST /pos/reservations</code></li>
+                                <li><code>POST /pos/reservations/{id}/status</code></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="mb-2 mt-4 font-semibold">Create Reservation Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "table_id": 1,                    // required, integer
+  "reservation_date_time": "2026-01-15 19:00:00",  // required, date
+  "party_size": 4,                  // required, integer, min:1
+  "name": "John Doe",               // optional, string
+  "phone": "+1234567890"            // optional, string
+}</pre
+                        >
+                    </div>
+                    <p class="mb-2 mt-4 font-semibold">Update Reservation Status Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "status": "confirmed"    // required, string (e.g., "pending", "confirmed", "cancelled")
+}</pre
+                        >
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">5. Orders (POS)</h3>
+                    <ul class="list-disc ml-6 mb-4 space-y-2">
+                        <li>Create/Submit: <code>POST /pos/orders</code></li>
+                        <li>Retrieve: <code>GET /pos/orders</code> or <code>GET /pos/orders/{id}</code></li>
+                        <li>Update Status: <code>POST /pos/orders/{id}/status</code></li>
+                        <li>Payment: <code>POST /pos/orders/{id}/pay</code></li>
+                    </ul>
+                    <p class="mb-2 mt-4 font-semibold">Create/Submit Order Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "items": [                         // required, array
+    {
+      "id": 1,                       // menu item id
+      "quantity": 2,                 // quantity
+      "price": 15.50,                // item price
+      "variation_id": 5,             // optional, menu item variation id
+      "modifiers": [                 // optional, array of modifiers
+        {
+          "id": 10,                  // modifier id
+          "price": 2.00              // modifier price
+        }
+      ],
+      "note": "Extra spicy",         // optional, item note
+      "tax_amount": 1.50,            // optional
+      "tax_percentage": 10,          // optional
+      "tax_breakup": {}              // optional
+    }
+  ],
+  "customer": {                      // optional, customer object
+    "name": "John Doe",
+    "phone": "+1234567890",
+    "email": "john@example.com"
+  },
+  "order_type": "Dine In",          // optional, string (default: "Dine In")
+  "table_id": 5,                     // optional, integer (required for dine-in)
+  "pax": 2,                          // optional, integer (default: 1)
+  "waiter_id": 3,                    // optional, integer
+  "delivery_address": "123 Main St", // optional, string
+  "delivery_time": "2026-01-15 20:00:00",  // optional, datetime
+  "delivery_fee": 5.00,              // optional, numeric (default: 0)
+  "delivery_executive_id": 7,        // optional, integer
+  "delivery_app_id": 2,              // optional, integer
+  "customer_address_id": 10,         // optional, integer
+  "discount_type": "percentage",     // optional, string
+  "discount_value": 10,              // optional, numeric (default: 0)
+  "discount_amount": 5.00,           // optional, numeric (default: 0)
+  "taxes": [                         // optional, array
+    {
+      "id": 1,                       // tax id
+      "amount": 2.50                 // tax amount
+    }
+  ],
+  "extra_charges": [1, 2],           // optional, array of charge IDs or objects
+  "actions": ["kot"],                // optional, array (e.g., "draft", "kot", "bill", "cancel")
+  "note": "Customer special request", // optional, string
+  "placed_via": "pos"                // optional, string (default: "pos")
+}</pre
+                        >
+                    </div>
+                    <p class="mb-2 mt-4 font-semibold">Update Order Status Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "status": "confirmed"    // required, string (e.g., "placed", "confirmed", "canceled")
+}</pre
+                        >
+                    </div>
+                    <p class="mb-2 mt-4 font-semibold">Payment Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "amount": 20,                      // optional, numeric
+  "method": "cash|card|wallet|other" // optional, string
+}</pre
+                        >
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">6. Customers</h3>
+                    <ul class="list-disc ml-6 mb-4 space-y-1">
+                        <li>List/Search: <code>GET /pos/customers</code></li>
+                        <li>Create/Update: <code>POST /pos/customers</code></li>
+                        <li>Phone codes: <code>GET /pos/phone-codes</code></li>
+                    </ul>
+                    <p class="mb-2 mt-4 font-semibold">Create/Update Customer Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "name": "John Doe",           // required, string, max:255
+  "phone_code": "+1",           // required
+  "phone": "1234567890",        // required
+  "email": "john@example.com",  // optional, must be valid email
+  "address": "123 Main Street"  // optional, string, max:500
+}</pre
+                        >
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">Global customer endpoints are also available under <code>/customer</code>.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">7. Staff, Waiters & Roles</h3>
+                    <ul class="list-disc ml-6 mb-4 space-y-1">
+                        <li>List by role: <code>GET /pos/waiters?role=delivery</code></li>
+                        <li>Optional: <code>include_permissions=true</code></li>
+                        <li>
+                            Platform endpoints:
+                            <ul class="list-disc ml-6 mt-2 space-y-1">
+                                <li><code>GET /platform/roles</code></li>
+                                <li><code>GET /platform/staff</code></li>
+                                <li><code>GET /platform/permissions</code></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4">8. Taxes, Charges, Restaurants & Branches</h3>
+                    <ul class="list-disc ml-6 mb-4 space-y-1">
+                        <li>Taxes: <code>GET /pos/taxes</code></li>
+                        <li>Extra charges: <code>GET /pos/extra-charges/{orderType}</code></li>
+                        <li>Restaurants: <code>GET /pos/restaurants</code></li>
+                        <li>Branches: <code>GET /pos/branches</code></li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="api-reference" class="section mb-12">
+                <h2 class="text-3xl font-bold mb-6">API Reference</h2>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Customer Addresses</h3>
+                    <ul class="list-disc ml-6 mb-4 space-y-2">
+                        <li>List addresses: <code>GET /customer-addresses?customer_id={id}</code></li>
+                        <li>Create address: <code>POST /customer-addresses</code></li>
+                        <li>Update address: <code>PUT /customer-addresses/{id}</code></li>
+                        <li>Delete address: <code>DELETE /customer-addresses/{id}</code></li>
+                    </ul>
+                    <p class="mb-2 mt-4 font-semibold">Create Customer Address Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "customer_id": 1,              // required, integer
+  "address": "123 Main Street",   // required, string
+  "lat": 40.7128,                // optional, numeric
+  "lng": -74.0060                 // optional, numeric
+}</pre
+                        >
+                    </div>
+                    <p class="mb-2 mt-4 font-semibold">Update Customer Address Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "address": "456 Oak Avenue",   // optional, string
+  "lat": 40.7580,                // optional, numeric
+  "lng": -73.9855                 // optional, numeric
+}</pre
+                        >
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Customer App Endpoints</h3>
+                    <ul class="list-disc ml-6 mb-4 space-y-2">
+                        <li>Get catalog: <code>GET /customer/catalog</code></li>
+                        <li>Place order: <code>POST /customer/orders</code></li>
+                        <li>Get my orders: <code>GET /customer/orders?customer_id={id}</code></li>
+                    </ul>
+                    <p class="text-sm text-gray-600 mt-2">
+                        The customer app endpoints use the same request body structure as POS order endpoints. The
+                        <code>placed_via</code> field is automatically set to "app".
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Typical POS Payment Flow</h3>
+                    <ol class="list-decimal ml-6 space-y-2">
+                        <li>Create order via <code>POST /pos/orders</code></li>
+                        <li>Collect payment externally (cash, card, or gateway)</li>
+                        <li>Confirm payment using <code>POST /pos/orders/{id}/pay</code></li>
+                        <li>Refresh orders and tables after success</li>
+                    </ol>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Error Handling</h3>
+                    <p class="mb-4">Always include <code>Accept: application/json</code> header.</p>
+                    <ul class="list-disc ml-6 space-y-2">
+                        <li><strong>401</strong> – Missing or invalid token</li>
+                        <li><strong>403 / 404</strong> – Branch scoping violation or resource not found</li>
+                        <li><strong>500</strong> – Unexpected server error</li>
+                    </ul>
+                    <p class="mt-4 text-sm text-gray-600">Payments must always be handled via the <code>/pay</code> endpoint.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4">Testing Examples</h3>
+                    <p class="mb-4 font-semibold">Login:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+curl -X POST "https://yourdomain.com/api/application-integration/auth/login" \
+-H "Content-Type: application/json" \
+-d '{"email":"&lt;user&gt;","password":"&lt;password&gt;"}'</pre
+                        >
+                    </div>
+                    <p class="mb-4 font-semibold">Pay Order:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+curl -X POST "https://yourdomain.com/api/application-integration/pos/orders/62/pay" \
+-H "Authorization: Bearer &lt;token&gt;" \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{"amount":20,"method":"cash"}'</pre
+                        >
+                    </div>
+                    <p class="mb-4 font-semibold">Register Device Token:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+curl -X POST "https://yourdomain.com/api/application-integration/pos/notifications/register-token" \
+-H "Authorization: Bearer &lt;token&gt;" \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{"token":"&lt;fcm&gt;","platform":"android","device_id":"device-123"}'</pre
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <section id="notifications" class="section mb-12">
+                <h2 class="text-3xl font-bold mb-6">Notifications & Push</h2>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Register Device Token</h3>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <code>POST /pos/notifications/register-token</code>
+                    </div>
+                    <p class="mb-2">Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "token": "fcm_or_apns_token_string",  // required, string
+  "platform": "ios|android|web",       // optional, string, max:20
+  "device_id": "device-123"            // optional, string, max:191
+}</pre
+                        >
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">In-App Notifications</h3>
+                    <ul class="list-disc ml-6 mb-4 space-y-2">
+                        <li>List: <code>GET /pos/notifications</code></li>
+                        <li>Mark as read: <code>POST /pos/notifications/{id}/read</code> (No request body required)</li>
+                        <li>Send test (debug): <code>POST /pos/notifications/test</code></li>
+                    </ul>
+                    <p class="mb-2 mt-4 font-semibold">Send Test Notification Request Body:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <pre>
+{
+  "title": "Test Notification",     // required, string
+  "body": "This is a test message", // required, string
+  "data": {                          // optional, object
+    "order_id": 123,
+    "type": "order_update"
+  }
+}</pre
+                        >
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Broadcast (Pusher / Laravel Echo)</h3>
+                    <p class="mb-2">Channel:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <code>private-App.Models.User.{userId}</code>
+                    </div>
+                    <p class="mb-2">Event:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded mb-4 font-mono text-sm overflow-x-auto">
+                        <code>BroadcastNotificationCreated</code>
+                    </div>
+                    <p class="text-sm text-gray-600">Payload includes <code>title</code>, <code>body</code>, and <code>data</code>.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4">Device Token Storage</h3>
+                    <ul class="list-disc ml-6 space-y-1">
+                        <li>Table name: <code>ai_device_tokens</code></li>
+                        <li>
+                            Fields: <code>user_id</code>, <code>restaurant_id</code>, <code>branch_id</code>, <code>platform</code>,
+                            <code>device_id</code>, <code>token</code>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="summary" class="section mb-12">
+                <h2 class="text-3xl font-bold mb-6">Summary of ApplicationIntegration Module Features</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="prose max-w-none">
+                        <p class="mb-4">
+                            The ApplicationIntegration module provides a comprehensive API layer with the following features:
+                        </p>
+                        <ul class="space-y-3 list-disc ml-6">
+                            <li>
+                                <strong>Unified API Contract:</strong>
+                                A single, stable API surface for all POS and customer-facing applications (Flutter, mobile, web).
+                            </li>
+                            <li>
+                                <strong>Secure Multi-Branch Enforcement:</strong>
+                                Tokens are scoped to restaurant and branch, ensuring users only access their assigned branch data.
+                            </li>
+                            <li>
+                                <strong>Complete Ordering Lifecycle:</strong>
+                                Full support for menus → items / variations / modifiers → carts → orders → payments.
+                            </li>
+                            <li>
+                                <strong>Operational Workflows:</strong>
+                                Table management, reservations, order status updates, delivery platforms, staff management, taxes, extra
+                                charges, and order types.
+                            </li>
+                            <li>
+                                <strong>Real-Time Notifications:</strong>
+                                Support for Pusher/Laravel Broadcast, stored notifications, and device token registration for push
+                                notifications.
+                            </li>
+                            <li>
+                                <strong>Customer Management:</strong>
+                                Complete customer CRUD operations with phone country code support.
+                            </li>
+                            <li>
+                                <strong>Staff & Role Management:</strong>
+                                Access to waiters, delivery staff, roles, and permissions with optional permission inclusion.
+                            </li>
+                            <li>
+                                <strong>Self-Contained Integration:</strong>
+                                No modifications required to the core application - fully modular and independent.
+                            </li>
+                            <li>
+                                <strong>Branch Context Switching:</strong>
+                                Ability to switch between branches while maintaining security boundaries.
+                            </li>
+                            <li>
+                                <strong>Device Token Management:</strong>
+                                Persistent storage of device tokens for push notifications across iOS, Android, and web platforms.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded mt-8">
+                    <div class="flex flex-col gap-5">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0">
+                                <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-blue-600 mt-1">
+                                    ApplicationIntegration module is ready to use. Run module migrations to create the
+                                    <code>ai_device_tokens</code> table, then start integrating your applications.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <script>
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                    });
+
+                    // Update active state
+                    document.querySelectorAll('.nav-link').forEach((link) => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+            });
+
+            // Update active nav link on scroll
+            window.addEventListener('scroll', () => {
+                const sections = document.querySelectorAll('.section');
+                const navLinks = document.querySelectorAll('.nav-link');
+
+                let current = '';
+                sections.forEach((section) => {
+                    const sectionTop = section.offsetTop;
+                    if (window.pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach((link) => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

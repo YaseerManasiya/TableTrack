@@ -170,6 +170,9 @@ class CustomModuleController extends Controller
 
 
             $this->runModuleMigrateCommand($moduleName);
+            
+            // Run module seeder if available
+            $this->runModuleSeedCommand($moduleName);
 
             // We will call the module function php artisan asset:activate, zoom:active , etc
             $this->runActivateCommand(strtolower($moduleName));
@@ -266,6 +269,20 @@ class CustomModuleController extends Controller
         }
 
         Artisan::call('module:migrate ' . $moduleName);
+    }
+
+    private function runModuleSeedCommand($moduleName)
+    {
+        if (empty($moduleName)) {
+            return;
+        }
+
+        try {
+            Artisan::call('module:seed', ['module' => $moduleName, '--force' => true]);
+        } catch (\Exception $e) {
+            // Silently fail if seeder doesn't exist or fails
+            logger('Module seeder failed for ' . $moduleName . ': ' . $e->getMessage());
+        }
     }
 
     private function runActivateCommand($moduleName)

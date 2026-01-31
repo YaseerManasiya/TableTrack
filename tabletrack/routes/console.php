@@ -11,6 +11,7 @@ Schedule::command('cleanup:print-files')->hourly();
 Schedule::command('app:trial-expire')->daily();
 Schedule::command('app:license-expire')->daily();
 Schedule::command('app:reset-branch-order-limits')->daily();
+Schedule::command('order:seed')->daily();
 Schedule::command('app:hide-cron-job-message')->everyMinute();
 
 Schedule::command('queue:flush')->weekly();

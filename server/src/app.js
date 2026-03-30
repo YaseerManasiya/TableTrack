@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
 const { apiLimiter, authLimiter } = require('./middleware/rateLimit');
-const { csrfProtection } = require('./middleware/csrf');
+const { csrfProtection, issueCsrfToken } = require('./middleware/csrf');
 
 const app = express();
 
@@ -15,6 +15,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// CSRF token endpoint (exempt from CSRF check itself – it's a GET)
+app.get('/api/csrf-token', issueCsrfToken);
 
 // CSRF protection for all state-changing API requests
 app.use('/api', csrfProtection);

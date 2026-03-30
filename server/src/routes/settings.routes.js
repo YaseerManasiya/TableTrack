@@ -106,4 +106,65 @@ router.get('/roles', authenticate, async (req, res) => {
   }
 });
 
+// ── Restaurant Charges ───────────────────────────────────────────────────────
+
+router.get('/charges', authenticate, async (req, res) => {
+  try {
+    const branchId = req.user.branchId;
+    const charges = await prisma.restaurantCharge.findMany({ where: { branchId } });
+    return success(res, charges);
+  } catch (e) {
+    return error(res, e.message, 500);
+  }
+});
+
+router.post('/charges', authenticate, async (req, res) => {
+  try {
+    const branchId = req.user.branchId;
+    const { name, amount, type, orderType, isActive } = req.body;
+    if (!name || amount === undefined) return error(res, 'Name and amount are required', 422);
+    const charge = await prisma.restaurantCharge.create({
+      data: {
+        branchId,
+        name,
+        amount: Number(amount),
+        type: type || 'fixed',
+        orderType: orderType || null,
+        isActive: isActive ?? true,
+      },
+    });
+    return success(res, charge, 'Charge created', 201);
+  } catch (e) {
+    return error(res, e.message, 500);
+  }
+});
+
+router.put('/charges/:id', authenticate, async (req, res) => {
+  try {
+    const { name, amount, type, orderType, isActive } = req.body;
+    const charge = await prisma.restaurantCharge.update({
+      where: { id: Number(req.params.id) },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(amount !== undefined && { amount: Number(amount) }),
+        ...(type !== undefined && { type }),
+        ...(orderType !== undefined && { orderType }),
+        ...(isActive !== undefined && { isActive }),
+      },
+    });
+    return success(res, charge);
+  } catch (e) {
+    return error(res, e.message, 500);
+  }
+});
+
+router.delete('/charges/:id', authenticate, async (req, res) => {
+  try {
+    await prisma.restaurantCharge.delete({ where: { id: Number(req.params.id) } });
+    return success(res, null, 'Deleted');
+  } catch (e) {
+    return error(res, e.message, 500);
+  }
+});
+
 module.exports = router;

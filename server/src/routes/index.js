@@ -15,5 +15,7 @@ router.use('/settings', require('./settings.routes'));
 router.use('/pos', require('./pos.routes'));
 router.use('/areas', require('./area.routes'));
 router.use('/item-categories', require('./category.routes'));
+router.use('/expenses', require('./expenses.routes'));
+router.use('/delivery-executives', require('./delivery.routes'));
 
 module.exports = router;

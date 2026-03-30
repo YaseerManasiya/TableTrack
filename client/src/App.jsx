@@ -13,6 +13,8 @@ import CustomerManagement from './pages/CustomerManagement.jsx';
 import Reports from './pages/Reports.jsx';
 import Reservations from './pages/Reservations.jsx';
 import Settings from './pages/Settings.jsx';
+import Expenses from './pages/Expenses.jsx';
+import DeliveryExecutives from './pages/DeliveryExecutives.jsx';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -52,6 +54,8 @@ export default function App() {
         <Route path="customers" element={<CustomerManagement />} />
         <Route path="reports" element={<Reports />} />
         <Route path="reservations" element={<Reservations />} />
+        <Route path="expenses" element={<Expenses />} />
+        <Route path="delivery-executives" element={<DeliveryExecutives />} />
         <Route path="settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

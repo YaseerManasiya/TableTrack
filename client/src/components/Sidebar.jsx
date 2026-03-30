@@ -12,6 +12,8 @@ const navItems = [
   { to: '/customers', label: 'Customers', icon: '👥' },
   { to: '/staff', label: 'Staff', icon: '👨‍💼' },
   { to: '/delivery-executives', label: 'Delivery', icon: '🛵' },
+  { to: '/waiter-requests', label: 'Waiter Requests', icon: '🔔' },
+  { to: '/payments', label: 'Payments', icon: '💳' },
   { to: '/expenses', label: 'Expenses', icon: '💰' },
   { to: '/reports', label: 'Reports', icon: '📈' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },

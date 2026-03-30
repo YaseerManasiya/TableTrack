@@ -11,19 +11,33 @@ router.get('/stats', authenticate, async (req, res) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const [ordersToday, revenueResult, pendingKots, tables] = await Promise.all([
-      prisma.order.count({ where: { branchId, createdAt: { gte: today, lt: tomorrow } } }),
-      prisma.order.aggregate({
-        where: { branchId, createdAt: { gte: today, lt: tomorrow }, status: { not: 'cancelled' } },
-        _sum: { total: true },
-      }),
-      prisma.kOT.count({ where: { branchId, status: 'pending' } }),
-      prisma.table.groupBy({
-        by: ['tableStatus'],
-        where: { branchId, isActive: true },
-        _count: { tableStatus: true },
-      }),
-    ]);
+    const [ordersToday, revenueResult, pendingKots, tables, customersToday, recentOrders] =
+      await Promise.all([
+        prisma.order.count({ where: { branchId, createdAt: { gte: today, lt: tomorrow } } }),
+        prisma.order.aggregate({
+          where: {
+            branchId,
+            createdAt: { gte: today, lt: tomorrow },
+            status: { not: 'cancelled' },
+          },
+          _sum: { total: true },
+        }),
+        prisma.kOT.count({ where: { branchId, status: 'pending' } }),
+        prisma.table.groupBy({
+          by: ['tableStatus'],
+          where: { branchId, isActive: true },
+          _count: { tableStatus: true },
+        }),
+        prisma.customer.count({
+          where: { branchId, createdAt: { gte: today, lt: tomorrow } },
+        }),
+        prisma.order.findMany({
+          where: { branchId },
+          take: 8,
+          orderBy: { createdAt: 'desc' },
+          include: { table: true, customer: true },
+        }),
+      ]);
 
     const tableStats = { available: 0, reserved: 0, running: 0 };
     tables.forEach((t) => {
@@ -35,6 +49,8 @@ router.get('/stats', authenticate, async (req, res) => {
       revenueToday: revenueResult._sum.total || 0,
       pendingKots,
       tableStats,
+      customersToday,
+      recentOrders,
     });
   } catch (e) {
     console.error(e);

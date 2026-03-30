@@ -17,5 +17,7 @@ router.use('/areas', require('./area.routes'));
 router.use('/item-categories', require('./category.routes'));
 router.use('/expenses', require('./expenses.routes'));
 router.use('/delivery-executives', require('./delivery.routes'));
+router.use('/payments', require('./payments.routes'));
+router.use('/waiter-requests', require('./waiter-requests.routes'));
 
 module.exports = router;

@@ -3,6 +3,8 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
+const { apiLimiter, authLimiter } = require('./middleware/rateLimit');
+const { csrfProtection } = require('./middleware/csrf');
 
 const app = express();
 
@@ -13,6 +15,13 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// CSRF protection for all state-changing API requests
+app.use('/api', csrfProtection);
+
+// Rate limiting
+app.use('/api', apiLimiter);
+app.use('/api/auth', authLimiter);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '..', process.env.UPLOAD_DIR || 'uploads')));

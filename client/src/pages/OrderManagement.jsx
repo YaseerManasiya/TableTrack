@@ -191,9 +191,25 @@ export default function OrderManagement() {
             {/* Totals */}
             <div className="space-y-1 text-sm text-right">
               <p>Subtotal: <span className="font-medium ml-2">${Number(selected.subtotal).toFixed(2)}</span></p>
-              <p>Tax: <span className="font-medium ml-2">${Number(selected.taxAmount).toFixed(2)}</span></p>
-              <p>Discount: <span className="font-medium ml-2">-${Number(selected.discount).toFixed(2)}</span></p>
-              <p className="text-base font-bold">Total: <span className="ml-2">${Number(selected.total).toFixed(2)}</span></p>
+              {(selected.orderTaxes?.length > 0) && selected.orderTaxes.map((t) => (
+                <p key={t.id} className="text-gray-600">
+                  {t.name} ({t.type === 'percentage' ? `${t.rate}%` : 'fixed'}):
+                  <span className="font-medium ml-2">+${Number(t.amount).toFixed(2)}</span>
+                </p>
+              ))}
+              {!(selected.orderTaxes?.length > 0) && Number(selected.taxAmount) > 0 && (
+                <p>Tax: <span className="font-medium ml-2">${Number(selected.taxAmount).toFixed(2)}</span></p>
+              )}
+              {(selected.orderCharges?.length > 0) && selected.orderCharges.map((c, i) => (
+                <p key={i} className="text-gray-600">
+                  {c.name}:
+                  <span className="font-medium ml-2">+${Number(c.amount).toFixed(2)}</span>
+                </p>
+              ))}
+              {Number(selected.discount) > 0 && (
+                <p>Discount: <span className="font-medium ml-2 text-green-600">-${Number(selected.discount).toFixed(2)}</span></p>
+              )}
+              <p className="text-base font-bold border-t pt-1 mt-1">Total: <span className="ml-2">${Number(selected.total).toFixed(2)}</span></p>
             </div>
 
             {/* Payment summary */}

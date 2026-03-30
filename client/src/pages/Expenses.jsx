@@ -17,10 +17,22 @@ export default function Expenses() {
   const [catModal, setCatModal] = useState(null);
   const [catForm, setCatForm] = useState(emptyCategory);
 
+  // Filters
+  const today = new Date().toISOString().slice(0, 10);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+
   // ── Queries ──────────────────────────────────────────────────────────────
   const expensesQ = useQuery({
-    queryKey: ['expenses', page],
-    queryFn: () => api.get(`/expenses?page=${page}`).then((r) => r.data),
+    queryKey: ['expenses', page, dateFrom, dateTo, categoryFilter],
+    queryFn: () => {
+      const params = new URLSearchParams({ page });
+      if (dateFrom) params.set('date_from', dateFrom);
+      if (dateTo) params.set('date_to', dateTo);
+      if (categoryFilter) params.set('category_id', categoryFilter);
+      return api.get(`/expenses?${params.toString()}`).then((r) => r.data);
+    },
   });
 
   const categoriesQ = useQuery({
@@ -144,6 +156,35 @@ export default function Expenses() {
       {/* Expenses Tab */}
       {tab === 'expenses' && (
         <>
+          {/* Filters */}
+          <div className="card p-4 flex flex-wrap items-end gap-4">
+            <div>
+              <label className="form-label">From</label>
+              <input type="date" className="form-input" value={dateFrom} max={dateTo || today} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} />
+            </div>
+            <div>
+              <label className="form-label">To</label>
+              <input type="date" className="form-input" value={dateTo} min={dateFrom} max={today} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} />
+            </div>
+            <div>
+              <label className="form-label">Category</label>
+              <select className="form-input" value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}>
+                <option value="">All categories</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+            {(dateFrom || dateTo || categoryFilter) && (
+              <button
+                onClick={() => { setDateFrom(''); setDateTo(''); setCategoryFilter(''); setPage(1); }}
+                className="btn-secondary text-xs"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
           {/* Summary Card */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="card p-4">

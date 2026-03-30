@@ -43,9 +43,6 @@ export default function Settings() {
         name: settingsQ.data.name ?? '',
         email: settingsQ.data.email ?? '',
         phone_number: settingsQ.data.phoneNumber ?? '',
-        currency: '',
-        address: '',
-        theme_color: '#2563eb',
       });
     }
   }, [settingsQ.data]);
@@ -172,21 +169,6 @@ export default function Settings() {
             <div>
               <label className="form-label">Phone</label>
               <input className="form-input" value={form.phone_number} onChange={(e) => setForm((f) => ({ ...f, phone_number: e.target.value }))} />
-            </div>
-            <div>
-              <label className="form-label">Currency</label>
-              <input className="form-input" value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))} placeholder="USD" />
-            </div>
-          </div>
-          <div>
-            <label className="form-label">Address</label>
-            <textarea className="form-input resize-none" rows={2} value={form.address} onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))} />
-          </div>
-          <div>
-            <label className="form-label">Theme Color</label>
-            <div className="flex items-center gap-3">
-              <input type="color" className="w-10 h-10 rounded border border-gray-300 p-1 cursor-pointer" value={form.theme_color} onChange={(e) => setForm((f) => ({ ...f, theme_color: e.target.value }))} />
-              <input className="form-input" value={form.theme_color} onChange={(e) => setForm((f) => ({ ...f, theme_color: e.target.value }))} />
             </div>
           </div>
           <div className="pt-2">

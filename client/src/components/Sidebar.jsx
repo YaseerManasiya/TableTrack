@@ -15,6 +15,7 @@ const navItems = [
   { to: '/waiter-requests', label: 'Waiter Requests', icon: '🔔' },
   { to: '/payments', label: 'Payments', icon: '💳' },
   { to: '/expenses', label: 'Expenses', icon: '💰' },
+  { to: '/modifier-groups', label: 'Modifiers', icon: '🔧' },
   { to: '/reports', label: 'Reports', icon: '📈' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ];

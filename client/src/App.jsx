@@ -18,6 +18,8 @@ import DeliveryExecutives from './pages/DeliveryExecutives.jsx';
 import Payments from './pages/Payments.jsx';
 import WaiterRequests from './pages/WaiterRequests.jsx';
 
+import ModifierGroups from './pages/ModifierGroups.jsx';
+
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) {
@@ -57,6 +59,7 @@ export default function App() {
         <Route path="reports" element={<Reports />} />
         <Route path="reservations" element={<Reservations />} />
         <Route path="expenses" element={<Expenses />} />
+        <Route path="modifier-groups" element={<ModifierGroups />} />
         <Route path="delivery-executives" element={<DeliveryExecutives />} />
         <Route path="payments" element={<Payments />} />
         <Route path="waiter-requests" element={<WaiterRequests />} />

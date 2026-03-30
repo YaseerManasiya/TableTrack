@@ -1,0 +1,511 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Currency {
+  id          BigInt       @id @default(autoincrement())
+  name        String
+  symbol      String
+  code        String       @unique
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  restaurants Restaurant[]
+
+  @@map("currencies")
+}
+
+model GlobalSetting {
+  id         BigInt   @id @default(autoincrement())
+  name       String?
+  email      String?
+  logo       String?
+  favicon    String?
+  themeColor String?  @map("theme_color")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("global_settings")
+}
+
+model Restaurant {
+  id          BigInt   @id @default(autoincrement())
+  uniqueHash  String   @unique @map("unique_hash")
+  name        String
+  ownerName   String?  @map("owner_name")
+  email       String?
+  phoneNumber String?  @map("phone_number")
+  currencyId  BigInt?  @map("currency_id")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  currency Currency? @relation(fields: [currencyId], references: [id])
+  branches Branch[]
+  users    User[]
+  orders   Order[]
+  roles    Role[]
+
+  @@map("restaurants")
+}
+
+model Branch {
+  id           BigInt   @id @default(autoincrement())
+  uniqueHash   String   @unique @map("unique_hash")
+  restaurantId BigInt   @map("restaurant_id")
+  name         String
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  restaurant       Restaurant       @relation(fields: [restaurantId], references: [id])
+  users            User[]
+  menus            Menu[]
+  itemCategories   ItemCategory[]
+  menuItems        MenuItem[]
+  areas            Area[]
+  tables           Table[]
+  customers        Customer[]
+  orders           Order[]
+  kots             KOT[]
+  payments         Payment[]
+  restaurantTaxes  RestaurantTax[]
+  reservations     Reservation[]
+  expenses         Expense[]
+  expenseCategories ExpenseCategory[]
+  deliveryExecutives DeliveryExecutive[]
+  waiterRequests   WaiterRequest[]
+  modifierGroups   ModifierGroup[]
+
+  @@map("branches")
+}
+
+model User {
+  id                        BigInt    @id @default(autoincrement())
+  restaurantId              BigInt?   @map("restaurant_id")
+  branchId                  BigInt?   @map("branch_id")
+  name                      String
+  email                     String    @unique
+  phoneNumber               String?   @map("phone_number")
+  phoneCode                 String?   @map("phone_code")
+  password                  String
+  profilePhotoPath          String?   @map("profile_photo_path")
+  emailVerifiedAt           DateTime? @map("email_verified_at")
+  termsAndPrivacyAccepted   Boolean   @default(false) @map("terms_and_privacy_accepted")
+  marketingEmailsAccepted   Boolean   @default(false) @map("marketing_emails_accepted")
+  locale                    String?   @default("en")
+  createdAt                 DateTime  @default(now()) @map("created_at")
+  updatedAt                 DateTime  @updatedAt @map("updated_at")
+
+  restaurant   Restaurant?    @relation(fields: [restaurantId], references: [id])
+  branch       Branch?        @relation(fields: [branchId], references: [id])
+  modelHasRoles ModelHasRole[]
+
+  @@map("users")
+}
+
+model Role {
+  id           BigInt   @id @default(autoincrement())
+  name         String
+  displayName  String?  @map("display_name")
+  guardName    String   @default("web") @map("guard_name")
+  restaurantId BigInt?  @map("restaurant_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  restaurant       Restaurant?       @relation(fields: [restaurantId], references: [id])
+  modelHasRoles    ModelHasRole[]
+  roleHasPermissions RoleHasPermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          BigInt  @id @default(autoincrement())
+  name        String
+  guardName   String  @default("web") @map("guard_name")
+  moduleId    BigInt? @map("module_id")
+
+  modelHasPermissions ModelHasPermission[]
+  roleHasPermissions  RoleHasPermission[]
+
+  @@map("permissions")
+}
+
+model ModelHasRole {
+  roleId     BigInt @map("role_id")
+  modelType  String @map("model_type")
+  modelId    BigInt @map("model_id")
+
+  role Role  @relation(fields: [roleId], references: [id])
+  user User? @relation(fields: [modelId], references: [id])
+
+  @@id([roleId, modelType, modelId])
+  @@map("model_has_roles")
+}
+
+model ModelHasPermission {
+  permissionId BigInt @map("permission_id")
+  modelType    String @map("model_type")
+  modelId      BigInt @map("model_id")
+
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([permissionId, modelType, modelId])
+  @@map("model_has_permissions")
+}
+
+model RoleHasPermission {
+  permissionId BigInt @map("permission_id")
+  roleId       BigInt @map("role_id")
+
+  permission Permission @relation(fields: [permissionId], references: [id])
+  role       Role       @relation(fields: [roleId], references: [id])
+
+  @@id([permissionId, roleId])
+  @@map("role_has_permissions")
+}
+
+model Menu {
+  id          BigInt   @id @default(autoincrement())
+  branchId    BigInt   @map("branch_id")
+  name        String
+  description String?  @db.Text
+  image       String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  branch    Branch     @relation(fields: [branchId], references: [id])
+  menuItems MenuItem[]
+
+  @@map("menus")
+}
+
+model ItemCategory {
+  id          BigInt   @id @default(autoincrement())
+  branchId    BigInt   @map("branch_id")
+  name        String
+  description String?  @db.Text
+  image       String?
+  isActive    Boolean  @default(true) @map("is_active")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  branch    Branch     @relation(fields: [branchId], references: [id])
+  menuItems MenuItem[]
+
+  @@map("item_categories")
+}
+
+model MenuItem {
+  id              BigInt   @id @default(autoincrement())
+  branchId        BigInt   @map("branch_id")
+  menuId          BigInt   @map("menu_id")
+  itemCategoryId  BigInt?  @map("item_category_id")
+  name            String
+  description     String?  @db.Text
+  price           Decimal  @db.Decimal(10, 2)
+  image           String?
+  isActive        Boolean  @default(true) @map("is_active")
+  preparationTime Int?     @map("preparation_time")
+  isFeatured      Boolean  @default(false) @map("is_featured")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  branch       Branch        @relation(fields: [branchId], references: [id])
+  menu         Menu          @relation(fields: [menuId], references: [id])
+  itemCategory ItemCategory? @relation(fields: [itemCategoryId], references: [id])
+  orderItems   OrderItem[]
+  kotItems     KOTItem[]
+
+  @@map("menu_items")
+}
+
+model Area {
+  id        BigInt   @id @default(autoincrement())
+  branchId  BigInt   @map("branch_id")
+  areaName  String   @map("area_name")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  branch Branch  @relation(fields: [branchId], references: [id])
+  tables Table[]
+
+  @@map("areas")
+}
+
+model Table {
+  id              BigInt      @id @default(autoincrement())
+  branchId        BigInt      @map("branch_id")
+  areaId          BigInt?     @map("area_id")
+  tableName       String      @map("table_name")
+  uniqueHash      String      @unique @map("unique_hash")
+  seatingCapacity Int         @default(4) @map("seating_capacity")
+  tableStatus     TableStatus @default(available) @map("table_status")
+  isActive        Boolean     @default(true) @map("is_active")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  branch       Branch        @relation(fields: [branchId], references: [id])
+  area         Area?         @relation(fields: [areaId], references: [id])
+  orders       Order[]
+  reservations Reservation[]
+  waiterRequests WaiterRequest[]
+
+  @@map("tables")
+}
+
+enum TableStatus {
+  available
+  reserved
+  running
+}
+
+model Customer {
+  id          BigInt   @id @default(autoincrement())
+  branchId    BigInt   @map("branch_id")
+  name        String
+  email       String?
+  phoneNumber String?  @map("phone_number")
+  address     String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  branch Branch  @relation(fields: [branchId], references: [id])
+  orders Order[]
+
+  @@map("customers")
+}
+
+model Order {
+  id           BigInt   @id @default(autoincrement())
+  branchId     BigInt   @map("branch_id")
+  restaurantId BigInt   @map("restaurant_id")
+  customerId   BigInt?  @map("customer_id")
+  tableId      BigInt?  @map("table_id")
+  orderType    String   @default("dine_in") @map("order_type")
+  orderNumber  String   @map("order_number")
+  total        Decimal  @default(0) @db.Decimal(10, 2)
+  subtotal     Decimal  @default(0) @db.Decimal(10, 2)
+  taxAmount    Decimal  @default(0) @db.Decimal(10, 2) @map("tax_amount")
+  discount     Decimal  @default(0) @db.Decimal(10, 2)
+  status       String   @default("pending")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  branch     Branch      @relation(fields: [branchId], references: [id])
+  restaurant Restaurant  @relation(fields: [restaurantId], references: [id])
+  customer   Customer?   @relation(fields: [customerId], references: [id])
+  table      Table?      @relation(fields: [tableId], references: [id])
+  orderItems OrderItem[]
+  kots       KOT[]
+  payments   Payment[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         BigInt   @id @default(autoincrement())
+  orderId    BigInt   @map("order_id")
+  menuItemId BigInt?  @map("menu_item_id")
+  name       String
+  price      Decimal  @db.Decimal(10, 2)
+  quantity   Int
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  order    Order     @relation(fields: [orderId], references: [id])
+  menuItem MenuItem? @relation(fields: [menuItemId], references: [id])
+
+  @@map("order_items")
+}
+
+model KOT {
+  id          BigInt    @id @default(autoincrement())
+  orderId     BigInt    @map("order_id")
+  branchId    BigInt    @map("branch_id")
+  tokenNumber Int       @map("token_number")
+  status      KOTStatus @default(pending)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  order    Order     @relation(fields: [orderId], references: [id])
+  branch   Branch    @relation(fields: [branchId], references: [id])
+  kotItems KOTItem[]
+
+  @@map("kots")
+}
+
+enum KOTStatus {
+  pending
+  in_progress
+  done
+  cancelled
+}
+
+model KOTItem {
+  id         BigInt   @id @default(autoincrement())
+  kotId      BigInt   @map("kot_id")
+  menuItemId BigInt?  @map("menu_item_id")
+  name       String
+  quantity   Int
+  status     String   @default("pending")
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  kot      KOT       @relation(fields: [kotId], references: [id])
+  menuItem MenuItem? @relation(fields: [menuItemId], references: [id])
+
+  @@map("kot_items")
+}
+
+model Payment {
+  id        BigInt   @id @default(autoincrement())
+  orderId   BigInt   @map("order_id")
+  branchId  BigInt   @map("branch_id")
+  amount    Decimal  @db.Decimal(10, 2)
+  method    String
+  status    String   @default("pending")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  order  Order  @relation(fields: [orderId], references: [id])
+  branch Branch @relation(fields: [branchId], references: [id])
+
+  @@map("payments")
+}
+
+model RestaurantTax {
+  id        BigInt   @id @default(autoincrement())
+  branchId  BigInt   @map("branch_id")
+  name      String
+  rate      Decimal  @db.Decimal(5, 2)
+  type      String   @default("percentage")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  branch Branch @relation(fields: [branchId], references: [id])
+
+  @@map("restaurant_taxes")
+}
+
+model Reservation {
+  id            BigInt            @id @default(autoincrement())
+  branchId      BigInt            @map("branch_id")
+  tableId       BigInt            @map("table_id")
+  customerName  String            @map("customer_name")
+  customerPhone String?           @map("customer_phone")
+  partySize     Int               @map("party_size")
+  reservedAt    DateTime          @map("reserved_at")
+  status        ReservationStatus @default(pending)
+  notes         String?           @db.Text
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  branch Branch @relation(fields: [branchId], references: [id])
+  table  Table  @relation(fields: [tableId], references: [id])
+
+  @@map("reservations")
+}
+
+enum ReservationStatus {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+model ExpenseCategory {
+  id        BigInt   @id @default(autoincrement())
+  branchId  BigInt   @map("branch_id")
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  branch   Branch    @relation(fields: [branchId], references: [id])
+  expenses Expense[]
+
+  @@map("expense_categories")
+}
+
+model Expense {
+  id                BigInt   @id @default(autoincrement())
+  branchId          BigInt   @map("branch_id")
+  expenseCategoryId BigInt?  @map("expense_category_id")
+  amount            Decimal  @db.Decimal(10, 2)
+  notes             String?  @db.Text
+  date              DateTime @db.Date
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  branch          Branch           @relation(fields: [branchId], references: [id])
+  expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id])
+
+  @@map("expenses")
+}
+
+model DeliveryExecutive {
+  id          BigInt   @id @default(autoincrement())
+  branchId    BigInt   @map("branch_id")
+  name        String
+  phoneNumber String?  @map("phone_number")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  branch Branch @relation(fields: [branchId], references: [id])
+
+  @@map("delivery_executives")
+}
+
+model WaiterRequest {
+  id        BigInt   @id @default(autoincrement())
+  branchId  BigInt   @map("branch_id")
+  tableId   BigInt   @map("table_id")
+  message   String?  @db.Text
+  status    String   @default("pending")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  branch Branch @relation(fields: [branchId], references: [id])
+  table  Table  @relation(fields: [tableId], references: [id])
+
+  @@map("waiter_requests")
+}
+
+model ModifierGroup {
+  id        BigInt   @id @default(autoincrement())
+  branchId  BigInt   @map("branch_id")
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  branch          Branch           @relation(fields: [branchId], references: [id])
+  modifierOptions ModifierOption[]
+
+  @@map("modifier_groups")
+}
+
+model ModifierOption {
+  id              BigInt   @id @default(autoincrement())
+  modifierGroupId BigInt   @map("modifier_group_id")
+  name            String
+  price           Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  modifierGroup ModifierGroup @relation(fields: [modifierGroupId], references: [id])
+
+  @@map("modifier_options")
+}

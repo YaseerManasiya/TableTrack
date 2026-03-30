@@ -6,3 +6,9 @@
 Addon/**/Resources/lang/*
 !Addon/**/Resources/lang/eng/
 vendor
+
+# Server
+server/node_modules/
+server/.env
+server/uploads/*
+!server/uploads/.gitkeep

@@ -53,7 +53,12 @@ router.put('/:id', authenticate, async (req, res) => {
     const { name, description, image, isActive } = req.body;
     const menu = await prisma.menu.update({
       where: { id: Number(req.params.id) },
-      data: { name, description, image, isActive },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(description !== undefined && { description }),
+        ...(image !== undefined && { image }),
+        ...(isActive !== undefined && { isActive }),
+      },
     });
     return success(res, menu);
   } catch (e) {

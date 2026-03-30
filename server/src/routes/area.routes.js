@@ -42,7 +42,7 @@ router.put('/:id', authenticate, async (req, res) => {
     const { areaName } = req.body;
     const area = await prisma.area.update({
       where: { id: Number(req.params.id) },
-      data: { areaName },
+      data: { ...(areaName !== undefined && { areaName }) },
     });
     return success(res, area);
   } catch (e) {

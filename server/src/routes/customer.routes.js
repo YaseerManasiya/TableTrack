@@ -55,7 +55,12 @@ router.put('/:id', authenticate, async (req, res) => {
     const { name, email, phoneNumber, address } = req.body;
     const cust = await prisma.customer.update({
       where: { id: Number(req.params.id) },
-      data: { name, email, phoneNumber, address },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(email !== undefined && { email }),
+        ...(phoneNumber !== undefined && { phoneNumber }),
+        ...(address !== undefined && { address }),
+      },
     });
     return success(res, cust);
   } catch (e) {

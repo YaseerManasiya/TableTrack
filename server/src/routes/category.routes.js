@@ -51,7 +51,13 @@ router.put('/:id', authenticate, async (req, res) => {
     const { name, description, image, isActive, order } = req.body;
     const cat = await prisma.itemCategory.update({
       where: { id: Number(req.params.id) },
-      data: { name, description, image, isActive, order },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(description !== undefined && { description }),
+        ...(image !== undefined && { image }),
+        ...(isActive !== undefined && { isActive }),
+        ...(order !== undefined && { order }),
+      },
     });
     return success(res, cat);
   } catch (e) {

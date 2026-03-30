@@ -50,6 +50,28 @@ router.get('/:id', authenticate, async (req, res) => {
   }
 });
 
+// Customer's order history
+router.get('/:id/orders', authenticate, async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const perPage = Number(req.query.per_page) || 20;
+    const customerId = Number(req.params.id);
+    const [data, total] = await Promise.all([
+      prisma.order.findMany({
+        where: { customerId },
+        skip: (page - 1) * perPage,
+        take: perPage,
+        include: { table: true, orderItems: true, payments: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.order.count({ where: { customerId } }),
+    ]);
+    return paginated(res, data, total, page, perPage);
+  } catch (e) {
+    return error(res, e.message, 500);
+  }
+});
+
 router.put('/:id', authenticate, async (req, res) => {
   try {
     const { name, email, phoneNumber, address } = req.body;

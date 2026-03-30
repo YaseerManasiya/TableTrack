@@ -30,7 +30,11 @@ router.get('/:id', authenticate, async (req, res) => {
   try {
     const kot = await prisma.kOT.findUnique({
       where: { id: Number(req.params.id) },
-      include: { kotItems: true, order: { include: { table: true } } },
+      include: {
+        kotItems: true,
+        order: { include: { table: true } },
+        cancelReasons: true,
+      },
     });
     if (!kot) return error(res, 'Not found', 404);
     return success(res, kot);
@@ -41,11 +45,25 @@ router.get('/:id', authenticate, async (req, res) => {
 
 router.put('/:id/status', authenticate, async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, cancelReason } = req.body;
+    if (!status) return error(res, 'Status is required', 422);
+
     const kot = await prisma.kOT.update({
       where: { id: Number(req.params.id) },
       data: { status },
     });
+
+    // Record cancel reason when KOT is cancelled
+    if (status === 'cancelled' && cancelReason) {
+      await prisma.kotCancelReason.create({
+        data: {
+          kotId: kot.id,
+          reason: cancelReason,
+          userId: req.user.id ? Number(req.user.id) : null,
+        },
+      });
+    }
+
     return success(res, kot);
   } catch (e) {
     return error(res, e.message, 500);
@@ -53,3 +71,4 @@ router.put('/:id/status', authenticate, async (req, res) => {
 });
 
 module.exports = router;
+

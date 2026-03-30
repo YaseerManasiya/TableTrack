@@ -19,5 +19,6 @@ router.use('/expenses', require('./expenses.routes'));
 router.use('/delivery-executives', require('./delivery.routes'));
 router.use('/payments', require('./payments.routes'));
 router.use('/waiter-requests', require('./waiter-requests.routes'));
+router.use('/modifier-groups', require('./modifier-groups.routes'));
 
 module.exports = router;

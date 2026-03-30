@@ -30,12 +30,65 @@ router.post('/', authenticate, async (req, res) => {
   try {
     const branchId = req.user.branchId;
     const restaurantId = req.user.restaurantId;
-    const { tableId, customerId, orderType, items, discount, taxAmount } = req.body;
-    if (!items || !items.length) return error(res, 'Items required');
+    const { tableId, customerId, orderType, items, discount, applyTaxes, applyCharges, taxIds, chargeIds } = req.body;
+    if (!items || !items.length) return error(res, 'Items required', 422);
 
-    const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0);
-    const total = subtotal + (taxAmount || 0) - (discount || 0);
+    const subtotal = items.reduce((s, i) => s + Number(i.price) * Number(i.quantity), 0);
 
+    // Fetch active taxes for this branch
+    const taxesToApply = applyTaxes !== false
+      ? await prisma.restaurantTax.findMany({
+          where: {
+            branchId,
+            isActive: true,
+            ...(taxIds && Array.isArray(taxIds) && taxIds.length > 0
+              ? { id: { in: taxIds.map(Number) } }
+              : {}),
+          },
+        })
+      : [];
+
+    // Fetch active charges for this branch / order type
+    const effectiveOrderType = orderType || 'dine_in';
+    const chargesToApply = applyCharges !== false
+      ? await prisma.restaurantCharge.findMany({
+          where: {
+            branchId,
+            isActive: true,
+            OR: [{ orderType: null }, { orderType: effectiveOrderType }],
+            ...(chargeIds && Array.isArray(chargeIds) && chargeIds.length > 0
+              ? { id: { in: chargeIds.map(Number) } }
+              : {}),
+          },
+        })
+      : [];
+
+    // Compute tax amounts
+    const computedTaxes = taxesToApply.map((t) => ({
+      taxId: t.id,
+      name: t.name,
+      rate: Number(t.rate),
+      amount:
+        t.type === 'percentage'
+          ? parseFloat(((subtotal * Number(t.rate)) / 100).toFixed(2))
+          : Number(t.rate),
+    }));
+
+    // Compute charge amounts
+    const computedCharges = chargesToApply.map((c) => ({
+      name: c.name,
+      amount: c.type === 'percentage'
+        ? parseFloat(((subtotal * Number(c.amount)) / 100).toFixed(2))
+        : Number(c.amount),
+      type: c.type,
+    }));
+
+    const totalTax = computedTaxes.reduce((s, t) => s + t.amount, 0);
+    const totalCharges = computedCharges.reduce((s, c) => s + c.amount, 0);
+    const totalDiscount = Number(discount || 0);
+    const total = parseFloat((subtotal + totalTax + totalCharges - totalDiscount).toFixed(2));
+
+    // Generate order number
     const count = await prisma.order.count({ where: { branchId } });
     const orderNumber = `ORD-${String(count + 1).padStart(4, '0')}`;
 
@@ -45,24 +98,47 @@ router.post('/', authenticate, async (req, res) => {
         restaurantId,
         tableId: tableId ? Number(tableId) : null,
         customerId: customerId ? Number(customerId) : null,
-        orderType: orderType || 'dine_in',
+        orderType: effectiveOrderType,
         orderNumber,
         subtotal,
         total,
-        taxAmount: taxAmount || 0,
-        discount: discount || 0,
+        taxAmount: totalTax,
+        discount: totalDiscount,
         status: 'pending',
         orderItems: {
           create: items.map((i) => ({
             menuItemId: i.menuItemId ? Number(i.menuItemId) : null,
             name: i.name,
-            price: i.price,
-            quantity: i.quantity,
+            price: Number(i.price),
+            quantity: Number(i.quantity),
             notes: i.notes || null,
           })),
         },
+        ...(computedTaxes.length > 0
+          ? {
+              orderTaxes: {
+                create: computedTaxes.map((t) => ({
+                  taxId: t.taxId,
+                  name: t.name,
+                  rate: t.rate,
+                  amount: t.amount,
+                })),
+              },
+            }
+          : {}),
+        ...(computedCharges.length > 0
+          ? {
+              orderCharges: {
+                create: computedCharges.map((c) => ({
+                  name: c.name,
+                  amount: c.amount,
+                  type: c.type,
+                })),
+              },
+            }
+          : {}),
       },
-      include: { orderItems: true },
+      include: { orderItems: true, orderTaxes: true, orderCharges: true },
     });
 
     // Create KOT
@@ -77,7 +153,7 @@ router.post('/', authenticate, async (req, res) => {
           create: items.map((i) => ({
             menuItemId: i.menuItemId ? Number(i.menuItemId) : null,
             name: i.name,
-            quantity: i.quantity,
+            quantity: Number(i.quantity),
             status: 'pending',
             notes: i.notes || null,
           })),
@@ -86,7 +162,7 @@ router.post('/', authenticate, async (req, res) => {
     });
 
     // Set table to running for dine-in
-    if (tableId && (orderType === 'dine_in' || !orderType)) {
+    if (tableId && (effectiveOrderType === 'dine_in')) {
       await prisma.table.update({
         where: { id: Number(tableId) },
         data: { tableStatus: 'running' },
@@ -110,6 +186,8 @@ router.get('/:id', authenticate, async (req, res) => {
         orderItems: { include: { menuItem: true } },
         kots: { include: { kotItems: true } },
         payments: true,
+        orderTaxes: true,
+        orderCharges: true,
       },
     });
     if (!order) return error(res, 'Not found', 404);
@@ -126,8 +204,8 @@ router.put('/:id/status', authenticate, async (req, res) => {
       where: { id: Number(req.params.id) },
       data: { status },
     });
-    // Free the table when order is completed
-    if (status === 'completed' && order.tableId) {
+    // Free the table when order is completed or cancelled
+    if ((status === 'completed' || status === 'cancelled') && order.tableId) {
       await prisma.table.update({
         where: { id: order.tableId },
         data: { tableStatus: 'available' },
@@ -146,8 +224,8 @@ router.put('/:id', authenticate, async (req, res) => {
       where: { id: Number(req.params.id) },
       data: {
         ...(status !== undefined && { status }),
-        ...(discount !== undefined && { discount }),
-        ...(taxAmount !== undefined && { taxAmount }),
+        ...(discount !== undefined && { discount: Number(discount) }),
+        ...(taxAmount !== undefined && { taxAmount: Number(taxAmount) }),
       },
     });
     return success(res, order);
@@ -157,3 +235,4 @@ router.put('/:id', authenticate, async (req, res) => {
 });
 
 module.exports = router;
+
